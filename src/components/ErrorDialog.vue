@@ -1,26 +1,27 @@
 <template>
   <teleport to="body">
-    <div @click="tryClose" class="backdrop"></div>
+    <div class="backdrop"></div>
     <transition name="dialog">
-      <dialog open >
-        <header>
+      <dialog open>
+        <header class="bg-red-600">
           <slot name="header">
-            <h2 class="font-bold text-xl">{{ title }} <i class="fa-solid fa-circle-check"></i></h2>
+            <h2 class="font-bold text-lg">
+              {{ title }} <i class="fa fa-circle-times"></i>
+            </h2>
           </slot>
         </header>
-        <section>
+          <section>
           <slot></slot>
         </section>
-        <menu v-if="!fixed">
+         <menu v-if="!fixed">
           <slot name="actions">
-            <button class="bg-green-400 p-2 rounded-xl" @click="tryClose">Close</button>
+            <button class="bg-red-200 p-2 rounded-xl" @click="tryClose">Close</button>
           </slot>
         </menu>
       </dialog>
     </transition>
   </teleport>
 </template>
-
 <script>
 export default {
   props: {
@@ -49,7 +50,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .backdrop {
   position: fixed;
@@ -60,7 +60,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 10;
 }
-
 dialog {
   position: fixed;
   top: 30vh;
@@ -77,7 +76,6 @@ dialog {
 }
 
 header {
-  background-color: #10e622;
   color: white;
   width: 100%;
   padding: 1rem;

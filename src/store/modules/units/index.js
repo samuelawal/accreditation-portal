@@ -4,19 +4,10 @@ import getters from "./getters.js";
 export default {
   namespaced: true,
   state() {
-      return {
-          units: [ 
-              {
-                name: 'Toyosi',
-                phone: '08045681391',
-                mod1: 'Done',
-                mod2: 'Fair',
-                mod3: 'Complete',
-                mod4: 'Delivered',
-                remarks: 'Average',
-              }
-          ]
-      }
+    return {
+      units: [],
+      generalUnit: [],
+    };
   },
   mutations,
   actions,

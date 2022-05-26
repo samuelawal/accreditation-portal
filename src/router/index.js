@@ -13,7 +13,7 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/admin/:id",
+      path: "/admin",
       name: "admin",
       component: AdminPanel,
       children: [

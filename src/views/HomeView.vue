@@ -8,9 +8,6 @@
         </base-card>
       </section>
     </div>
-    <div v-for="result in results" :key="result.Name">
-      <div>{{ result.Name }}</div>
-    </div>
   </main>
 </template>
 <script>

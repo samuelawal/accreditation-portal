@@ -1,13 +1,19 @@
 <template>
-  <base-dialog title="Success" v-if="successMessage" :show="isLoading">
+  <base-dialog
+    title="Success"
+    v-if="successMessage"
+    :show="isLoading"
+    @close="handleMessage"
+  >
     <p class="text-black font-bold">Data submitted successfully......</p>
   </base-dialog>
-
+  <error-dialog v-if="myError" title=" Failed!!">
+    <p class="text-black font-bold">{{ error }}</p>
+  </error-dialog>
   <base-spinner v-if="isLoading" />
   <base-card>
-  <p v-if="myError">{{error}}grfrfrfrf</p>
     <img src="../img/winners.png" class="w-20 mx-auto" />
-    <p v-if="myError">{{error}}</p>
+
     <h1 class="text-center text-xl font-bold text-red-600 text-2xl py-4 px-16">
       Deacon's Board Accreditation Portal
     </h1>
@@ -54,7 +60,7 @@
 <script>
 import * as XLSX from "xlsx/xlsx.mjs";
 import BaseCard from "./BaseCard.vue";
-import BaseDialog from './BaseDialog.vue';
+import BaseDialog from "./BaseDialog.vue";
 export default {
   data() {
     return {
@@ -64,8 +70,8 @@ export default {
       isLoading: false,
       formIsValid: true,
       successMessage: false,
-      error: '',
-      myError: false
+      error: "",
+      myError: false,
     };
   },
   computed: {
@@ -77,11 +83,22 @@ export default {
       }
     },
   },
+  created(){
+this.loadResult()
+  },
   components: {
     BaseCard,
     BaseDialog,
   },
   methods: {
+    loadResult(){
+     this.$store.dispatch("units/LOAD_UNITS_DATA");
+    },
+    handleMessage() {
+      this.myError = false;
+      this.successMessage = false;
+      this.isLoading = false;
+    },
     fileName(event) {
       const accreditationName = event.target.files[0].name;
       this.unitFile = accreditationName;
@@ -92,14 +109,14 @@ export default {
         this.formIsValid = false;
         return;
       } else {
-        this.isLoading = true
+        this.isLoading = true;
         let finalData = [];
         const file = e.target[1].files[0];
         const data = await file.arrayBuffer();
         const workbook = await XLSX.read(data);
         const workbook_sheet_names = workbook.SheetNames;
         let unitID = this.serviceUnit.toLowerCase();
-        workbook_sheet_names.forEach((sheet_name) => {
+        workbook_sheet_names.forEach(async (sheet_name) => {
           let rowObject = XLSX.utils.sheet_to_row_object_array(
             workbook.Sheets[sheet_name]
           );
@@ -118,9 +135,8 @@ export default {
             };
             finalData.push(sheetData);
             this.results = finalData;
-          });
           // console.log(this.results)
-          let unitData = {}
+          let unitData = {};
           for (let i = 0; i < this.results.length; i++) {
             const myData = {
               name: finalData[i].name,
@@ -133,30 +149,25 @@ export default {
               remarks: finalData[i].remarks,
               id: finalData[i].id,
             };
-            unitData = myData
+            unitData = myData;
           }
           try {
-            this.$store.dispatch("units/SUBMIT_FORM_DATA", unitData)
-          }catch(err){
-            this.error = err
-            console.log(this.error)
+            await this.$store.dispatch("units/SUBMIT_FORM_DATA", unitData);
+            this.isLoading = false
+            this.successMessage = true;
+            // this.$router.push('/admin/dashboard')
+          } catch (err) {
+            this.myError = true;
+            this.isLoading = false;
+            this.error = err;
+            console.log(this.error);
           }
-            this.serviceUnit = "";
-            this.unitFile = "";
-
+          this.serviceUnit = "";
+          this.unitFile = "";
         });
+          });
       }
     },
-    // async loadUnits(data) {
-    //   try{
-    //     await this.$store.dispatch("units/SUBMIT_FORM_DATA", data);
-    //   }
-    //   catch(err){
-    //     this.error = err.message || 'Failed to submit Data'
-    //     console.log(this.eror)
-    //   }
-    //   this.isLoading = false
-    // },
   },
 };
 </script>

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import BaseSpinner from '../src/components/BaseSpinner.vue'
 import BaseDialog from '../src/components/BaseDialog.vue'
+import ErrorDialog from '../src/components/ErrorDialog.vue'
 import './index.css'
 import router from './router'
 import store from './store/index.js'
@@ -11,4 +12,5 @@ app.use(store)
 app.use(router)
 app.component('base-spinner', BaseSpinner);
 app.component('base-dialog', BaseDialog);
+app.component('error-dialog', ErrorDialog);
 app.mount('#app')
